@@ -103,22 +103,13 @@ function renderText(TextGroup, newScale, chosenAxis,kind) {
 
 
 // function used for updating circles group with new tooltip
-function updateToolTip(chosenAxis, circlesGroup) {
-
-  var label;
-
-  if (chosenAxis === "poverty") {
-    label = "Hair Length:";
-  }
-  else {
-    label = "# of Albums:";
-  }
+function updateToolTip(chosenXAxis,chosenYAxis ,circlesGroup) {
 
   var toolTip = d3.tip()
-    .attr("class", "tooltip")
+    .attr("class", "d3-tip")
     .offset([80, -60])
     .html(function(d) {
-      return (`${d.rockband}<br>${label} ${d[chosenAxis]}`);
+      return (`${d.state}<br>${chosenXAxis} ${d[chosenXAxis]}<br>${chosenYAxis} ${d[chosenYAxis]}`);
     });
 
   circlesGroup.call(toolTip);
@@ -135,24 +126,6 @@ function updateToolTip(chosenAxis, circlesGroup) {
 }
 
 
-    // // Step 1: Append tooltip div
-    // var toolTip = d3.select("body")
-    //   .append("div")
-    //   .classed("tooltip", true);
-
-    // // Step 2: Create "mouseover" event listener to display tooltip
-    // circlesGroup.on("mouseover", function(d) {
-    //   toolTip.style("display", "block")
-    //       .html(
-    //         `<strong>${dateFormatter(d.date)}<strong><hr>${d.medals}
-    //     medal(s) won`)
-    //       .style("left", d3.event.pageX + "px")
-    //       .style("top", d3.event.pageY + "px");
-    // })
-    //   // Step 3: Create "mouseout" event listener to hide tooltip
-    //   .on("mouseout", function() {
-    //     toolTip.style("display", "none");
-    //   });
 
 
 
@@ -283,7 +256,7 @@ console.log (State);
     .text("#healthcare");
 
 //   // updateToolTip function above csv import
-//   var circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+//   var circlesGroup = updateToolTip(chosenXAxis,chosenYAxis, circlesGroup);
 //   var circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
 
 //   console.log(xlabelsGroup.selectAll("text"));
@@ -314,7 +287,7 @@ console.log (State);
         TextGroup = renderText(TextGroup, xLinearScale, chosenXAxis,"x");
 
         // updates tooltips with new info
-        // circlesGroup = updateToolTip(chosenXAxis, circlesGroup);
+        circlesGroup = updateToolTip(chosenXAxis,chosenYAxis, circlesGroup);
 
         // changes classes to change bold text
 
@@ -385,7 +358,7 @@ console.log (State);
         TextGroup = renderText(TextGroup, yLinearScale, chosenYAxis,"y");
 
         // updates tooltips with new info
-        // circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
+        circlesGroup = updateToolTip(chosenXAxis,chosenYAxis, circlesGroup);
 
         // changes classes to change bold text
         switch(chosenYAxis){
@@ -428,6 +401,31 @@ console.log (State);
         
       }
     });
+
+
+    // // Step 1: Append tooltip div
+    // var toolTip = d3.select("body")
+    //   .append("div")
+    //   .classed("d3-tip", true);
+
+    // // Step 2: Create "mouseover" event listener to display tooltip
+    // circlesGroup.on("mouseover", function(d) {
+    //   toolTip.style("display", "block")
+    //       .html(
+    //         `<strong>${dateFormatter(d.date)}<strong><hr>${d.medals}
+    //     medal(s) won`)
+    //       .style("left", d3.event.pageX + "px")
+    //       .style("top", d3.event.pageY + "px");
+    // })
+    //   // Step 3: Create "mouseout" event listener to hide tooltip
+    //   .on("mouseout", function() {
+    //     toolTip.style("display", "none");
+    //   });
+
+
+
+
+
 
 }).catch(function(error) {
   console.log(error);
