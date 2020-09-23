@@ -128,11 +128,91 @@ function updateToolTip(chosenXAxis,chosenYAxis ,circlesGroup) {
 
 
 
+// function findLineByLeastSquares(data,x, y) {
+//   var sum_x = 0;
+//   var sum_y = 0;
+//   var sum_xy = 0;
+//   var sum_xx = 0;
+//   var count = 0;
+//   values_x=data.map(d => d[x]);
+//   values_y=data.map(d => d[y]);
+//   // console.log(d3.max(data, d => d[x]));
+//   // console.log(data,x,y);
+//   /*
+//    * We'll use those variables for faster read/write access.
+//    */
+//   var x = 0;
+//   var y = 0;
+//   var values_length = values_x.length;
+
+  
+
+
+//   if (values_length != values_y.length) {
+//       throw new Error('The parameters values_x and values_y need to have same size!');
+//   }
+
+//   /*
+//    * Nothing to do.
+//    */
+//   if (values_length === 0) {
+//       return [ [], [] ];
+//   }
+
+//   /*
+//    * Calculate the sum for each of the parts necessary.
+//    */
+//   for (var v = 0; v < values_length; v++) 
+//     {
+//       x = values_x[v];
+//       y = values_y[v];
+//       sum_x += x;
+//       sum_y += y;
+//       sum_xx += x*x;
+//       sum_xy += x*y;
+//       count++;
+//     }
+
+//   /*
+//    * Calculate m and b for the formula:
+//    * y = x * m + b
+//    */
+//   var m = (count*sum_xy - sum_x*sum_y) / (count*sum_xx - sum_x*sum_x);
+//   var b = (sum_y/count) - (m*sum_x)/count;
+
+//   /*
+//    * We will make the x and y result line now
+//    */
+//   result=[];
+//   for (var v = 0; v < values_length; v++) {
+//       x = values_x[v];
+//       y = x * m + b;
+//       Temp={};
+//       // result_values_x.push(x);
+//       // result_values_y.push(y);
+//       Temp={x,y}
+//       result.push(Temp);
+//     }
+ 
+// // console.log(result_values_x,result_values_y);
+// //   return {result_values_x, result_values_y};
+ 
+// console.log(result);
+//   return result;
+
+
+// }
+
+
+
 
 // Retrieve data from the CSV file and execute everything below
 d3.csv("./assets/data/data.csv").then(function(Data, err) {
   if (err) throw err;
 
+  // var State=Data.map(d => d.abbr);
+  // console.log (State);
+    
   // parse data
   Data.forEach(function(data) {
     data.obesity = +data.obesity;
@@ -198,9 +278,77 @@ d3.csv("./assets/data/data.csv").then(function(Data, err) {
     .classed("stateText", true)
     .text(d => d.abbr)
   
-var State=Data.map(d => d.abbr);
-console.log (State);
-  
+
+// LinearReg (Data,chosenXAxis,chosenYAxis);
+
+
+console.log(Data["id"],chosenYAxis);
+
+
+Linear_x_y = _.zipWith(Data.chosenXAxis,Data.chosenYAxis, (X, Y) => (
+  {
+    X: year,
+    Y: salary
+  }
+))
+console.log(Linear_x_y);
+
+
+linearRegression = d3.regressionLinear()
+   .x(d => d.X)
+   .y(d => d.Y)
+   .domain([-1.7, 16]);
+res = linearRegression(Linear_x_y)
+console.log(res)
+
+
+// var Linear_x_y=findLineByLeastSquares (Data,"age","smokes");
+// console.log(Linear_x_y);
+
+
+
+  chartGroup.append("svg:path")
+  .datum(Linear_x_y)
+    .attr("fill", "none")
+  .attr("stroke", "black")
+  .attr("stroke-width", 1.5)
+  .attr("stroke-linejoin", "round")
+  .attr("stroke-linecap", "round")
+  .attr("d", d3.line()
+  .x(function(d) { 
+    console.log(d.x);
+    return (d.x)*10 ;})   
+  .y(function(d) { 
+    console.log(d.y);
+    return (d.y)*10}));
+
+
+  //  var LinearLine=chartGroup.selectAll("path")
+  //     .data(Linear_x_y)
+  //     .enter()
+  //     .append("path")
+  //     .attr("fill", "black")
+  //     .attr("stroke", "black")
+  //     .attr("stroke-width", 5)
+  //     .attr("d", line);
+      
+      // d3.line()
+      //   .x(function(d) { return (d.result_values_x) })
+      //   .y(function(d) { console.log(d.result_values_y );
+      //     return (d.result_values_y) }))
+        
+
+    // // Add the line
+    // var LinearLine=chartGroup.append("path")
+    // .attr("fill", "black")
+    // .attr("stroke", "black")
+    // .attr("stroke-width", 5)
+    // .attr("d", d3.line()
+    //   .x([6,20])
+    //   .y([10,20]))
+      
+
+
 
   // Create group for x-axis labels
   var xlabelsGroup = chartGroup.append("g")
@@ -255,11 +403,7 @@ console.log (State);
     .classed("active", true)
     .text("#healthcare");
 
-//   // updateToolTip function above csv import
-//   var circlesGroup = updateToolTip(chosenXAxis,chosenYAxis, circlesGroup);
-//   var circlesGroup = updateToolTip(chosenYAxis, circlesGroup);
 
-//   console.log(xlabelsGroup.selectAll("text"));
   // x axis labels event listener
   xlabelsGroup.selectAll("text")
     .on("click", function() {
@@ -401,28 +545,6 @@ console.log (State);
         
       }
     });
-
-
-    // // Step 1: Append tooltip div
-    // var toolTip = d3.select("body")
-    //   .append("div")
-    //   .classed("d3-tip", true);
-
-    // // Step 2: Create "mouseover" event listener to display tooltip
-    // circlesGroup.on("mouseover", function(d) {
-    //   toolTip.style("display", "block")
-    //       .html(
-    //         `<strong>${dateFormatter(d.date)}<strong><hr>${d.medals}
-    //     medal(s) won`)
-    //       .style("left", d3.event.pageX + "px")
-    //       .style("top", d3.event.pageY + "px");
-    // })
-    //   // Step 3: Create "mouseout" event listener to hide tooltip
-    //   .on("mouseout", function() {
-    //     toolTip.style("display", "none");
-    //   });
-
-
 
 
 
