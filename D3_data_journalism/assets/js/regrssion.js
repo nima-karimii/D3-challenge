@@ -5,9 +5,9 @@ linearRegressionLine = ss.linearRegressionLine(linearRegression);
 // We need to define the 2 points of the regression line to be able to have D3 make a line.
 // This just makes 2 points, 1 for the start and 1 for the end of our line.
 regressionPoints = {
-    const firstX = data[0].x;
-    const lastX = data.slice(-1)[0].x;
-    const xCoordinates = [firstX, lastX];
+    var firstX = data[0].x;
+    var lastX = data.slice(-1)[0].x ;
+    var xCoordinates = [firstX, lastX];
     
     return xCoordinates.map(d => ({
       x: d,                         // We pick x and y arbitrarily, just make sure they match d3.line accessors

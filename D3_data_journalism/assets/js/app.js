@@ -84,6 +84,28 @@ function renderCircles(circlesGroup, newScale, chosenAxis,kind) {
   return circlesGroup;
 }
 
+// function used for updating circles group with a transition to
+// new circles
+function renderRegression(LinearReg, LinearRegdata,xLinearScale,yLinearScale) {
+
+  LinearReg.datum(LinearRegdata)
+    .transition()
+    .duration(1000)
+    .attr("d", d3.line()
+    .x(function(d) { 
+    // console.log('x',d.x);
+    return ( xLinearScale(d.x));})   
+    .y(function(d) { 
+    // console.log('y',d.yhat);
+    return ( yLinearScale(d.yhat));}));
+  return LinearReg;
+}
+
+
+
+
+
+
 // function used for updating Texts group with a transition to
 // new Texts
 function renderText(TextGroup, newScale, chosenAxis,kind) {
@@ -124,84 +146,6 @@ function updateToolTip(chosenXAxis,chosenYAxis ,circlesGroup) {
 
   return circlesGroup;
 }
-
-
-
-
-// function findLineByLeastSquares(data,x, y) {
-//   var sum_x = 0;
-//   var sum_y = 0;
-//   var sum_xy = 0;
-//   var sum_xx = 0;
-//   var count = 0;
-//   values_x=data.map(d => d[x]);
-//   values_y=data.map(d => d[y]);
-//   // console.log(d3.max(data, d => d[x]));
-//   // console.log(data,x,y);
-//   /*
-//    * We'll use those variables for faster read/write access.
-//    */
-//   var x = 0;
-//   var y = 0;
-//   var values_length = values_x.length;
-
-  
-
-
-//   if (values_length != values_y.length) {
-//       throw new Error('The parameters values_x and values_y need to have same size!');
-//   }
-
-//   /*
-//    * Nothing to do.
-//    */
-//   if (values_length === 0) {
-//       return [ [], [] ];
-//   }
-
-//   /*
-//    * Calculate the sum for each of the parts necessary.
-//    */
-//   for (var v = 0; v < values_length; v++) 
-//     {
-//       x = values_x[v];
-//       y = values_y[v];
-//       sum_x += x;
-//       sum_y += y;
-//       sum_xx += x*x;
-//       sum_xy += x*y;
-//       count++;
-//     }
-
-//   /*
-//    * Calculate m and b for the formula:
-//    * y = x * m + b
-//    */
-//   var m = (count*sum_xy - sum_x*sum_y) / (count*sum_xx - sum_x*sum_x);
-//   var b = (sum_y/count) - (m*sum_x)/count;
-
-//   /*
-//    * We will make the x and y result line now
-//    */
-//   result=[];
-//   for (var v = 0; v < values_length; v++) {
-//       x = values_x[v];
-//       y = x * m + b;
-//       Temp={};
-//       // result_values_x.push(x);
-//       // result_values_y.push(y);
-//       Temp={x,y}
-//       result.push(Temp);
-//     }
- 
-// // console.log(result_values_x,result_values_y);
-// //   return {result_values_x, result_values_y};
- 
-// console.log(result);
-//   return result;
-
-
-// }
 
 
 
@@ -279,77 +223,27 @@ d3.csv("./assets/data/data.csv").then(function(Data, err) {
     .text(d => d.abbr)
   
 
-// LinearReg (Data,chosenXAxis,chosenYAxis);
+    // append initial Linear Regression
+LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis)
 
-
-console.log(Data["id"],chosenYAxis);
-
-
-Linear_x_y = _.zipWith(Data.chosenXAxis,Data.chosenYAxis, (X, Y) => (
-  {
-    X: year,
-    Y: salary
-  }
-))
-console.log(Linear_x_y);
-
-
-linearRegression = d3.regressionLinear()
-   .x(d => d.X)
-   .y(d => d.Y)
-   .domain([-1.7, 16]);
-res = linearRegression(Linear_x_y)
-console.log(res)
-
-
-// var Linear_x_y=findLineByLeastSquares (Data,"age","smokes");
-// console.log(Linear_x_y);
-
-
-
-  chartGroup.append("svg:path")
-  .datum(Linear_x_y)
+  var LinearReg=chartGroup.append("svg:path")
+    .datum(LinearRegdata)
     .attr("fill", "none")
-  .attr("stroke", "black")
-  .attr("stroke-width", 1.5)
-  .attr("stroke-linejoin", "round")
-  .attr("stroke-linecap", "round")
-  .attr("d", d3.line()
-  .x(function(d) { 
-    console.log(d.x);
-    return (d.x)*10 ;})   
-  .y(function(d) { 
-    console.log(d.y);
-    return (d.y)*10}));
+    .attr("stroke", "red")
+    .attr("stroke-width", 1.5)
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("d", d3.line()
+    .x(function(d) { 
+    // console.log('x',d.x);
+    return ( xLinearScale(d.x));})   
+    .y(function(d) { 
+    // console.log('y',d.yhat);
+    return ( yLinearScale(d.yhat));}));
 
-
-  //  var LinearLine=chartGroup.selectAll("path")
-  //     .data(Linear_x_y)
-  //     .enter()
-  //     .append("path")
-  //     .attr("fill", "black")
-  //     .attr("stroke", "black")
-  //     .attr("stroke-width", 5)
-  //     .attr("d", line);
-      
-      // d3.line()
-      //   .x(function(d) { return (d.result_values_x) })
-      //   .y(function(d) { console.log(d.result_values_y );
-      //     return (d.result_values_y) }))
-        
-
-    // // Add the line
-    // var LinearLine=chartGroup.append("path")
-    // .attr("fill", "black")
-    // .attr("stroke", "black")
-    // .attr("stroke-width", 5)
-    // .attr("d", d3.line()
-    //   .x([6,20])
-    //   .y([10,20]))
-      
-
-
-
+    // append initial toltip Regression
+    circlesGroup = updateToolTip(chosenXAxis,chosenYAxis, circlesGroup);
+ 
   // Create group for x-axis labels
   var xlabelsGroup = chartGroup.append("g")
     .attr("transform", `translate(${width / 2}, ${height + 20})`);
@@ -359,21 +253,21 @@ console.log(res)
     .attr("y", 20)
     .attr("value", "poverty") // value to grab for event listener
     .classed("active", true)
-    .text("#poverty(%)");
+    .text("In Poverty(%)");
 
   var ageLable = xlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 40)
     .attr("value", "age") // value to grab for event listener
     .classed("inactive", true)
-    .text("#age");
+    .text("Age(Median)");
 
     var incomeLable = xlabelsGroup.append("text")
     .attr("x", 0)
     .attr("y", 60)
     .attr("value", "income") // value to grab for event listener
     .classed("inactive", true)
-    .text("#income");
+    .text("Household Income(Median)");
 
     // append y axis
     var ylabelsGroup= chartGroup.append("g")
@@ -385,7 +279,7 @@ console.log(res)
     .attr("dy", "1em")
     .attr("value", "obesity") // value to grab for event listener
     .classed("inactive", true)
-    .text("#obesity");
+    .text("Obesity(%)");
 
     var smokesLable=ylabelsGroup.append("text")
     .attr("y", 0 - margin.left+20)
@@ -393,7 +287,7 @@ console.log(res)
     .attr("dy", "1em")
     .attr("value", "smokes") // value to grab for event listener
     .classed("inactive", true)
-    .text("#smokes");
+    .text("smokes(%)");
 
     var healthcareLable=ylabelsGroup.append("text")
     .attr("y", 0 - margin.left+40)
@@ -401,7 +295,7 @@ console.log(res)
     .attr("dy", "1em")
     .attr("value", "healthcare") // value to grab for event listener
     .classed("active", true)
-    .text("#healthcare");
+    .text("Lacks Healthcare(%)");
 
 
   // x axis labels event listener
@@ -409,8 +303,8 @@ console.log(res)
     .on("click", function() {
       // get value of selection
       var value = d3.select(this).attr("value");
-      console.log (value);
-
+      // console.log (value);
+    
       if (value !== chosenXAxis) {
 
         // replaces chosenXAxis with value
@@ -432,6 +326,15 @@ console.log(res)
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis,chosenYAxis, circlesGroup);
+
+
+        // updates Linear regression with new info
+        LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis);
+        LinearReg=renderRegression(LinearReg, LinearRegdata,xLinearScale,yLinearScale);
+
+
+
+
 
         // changes classes to change bold text
 
@@ -503,6 +406,10 @@ console.log(res)
 
         // updates tooltips with new info
         circlesGroup = updateToolTip(chosenXAxis,chosenYAxis, circlesGroup);
+
+        // updates Linear regression with new info
+        LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis);
+        LinearReg=renderRegression(LinearReg, LinearRegdata,xLinearScale,yLinearScale);
 
         // changes classes to change bold text
         switch(chosenYAxis){
