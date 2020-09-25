@@ -1,4 +1,4 @@
-// @TODO: YOUR CODE HERE!
+/////////////////////////Global Variable //////////////////////////////////////
 var svgWidth = 800;
 var svgHeight = 600;
 
@@ -33,10 +33,11 @@ var chartGroup = svg.append("g")
 var chosenXAxis = "poverty";
 var chosenYAxis = "healthcare";
 
+/////////////////////////////////Functions//////////////////////////////////
+
 // function used for updating scale var upon click on axis label
 function Scale(Data, chosenAxis,kind) 
 {
-  // create scales
   var LinearScale = d3.scaleLinear()
     
     if (kind==="x") {
@@ -88,10 +89,7 @@ function renderCircles(circlesGroup, newScale, chosenAxis,kind) {
       case "obesity": {circlesGroup.attr("fill", "#7fc97f");break;}
       case "smokes": {circlesGroup.attr("fill", "#beaed4");break;}
       case "healthcare": {circlesGroup.attr("fill", "#fdc086");break;}
-
     }
-
-
     }
 
   return circlesGroup;
@@ -139,7 +137,6 @@ function renderText(TextGroup, newScale, chosenAxis,kind) {
 
 // function used for updating circles group with new tooltip
 function updateToolTip(chosenXAxis,chosenYAxis ,circlesGroup) {
-
   var toolTip = d3.tip()
     .attr("class", "d3-tip")
     .offset([80, -60])
@@ -160,15 +157,13 @@ function updateToolTip(chosenXAxis,chosenYAxis ,circlesGroup) {
   return circlesGroup;
 }
 
-
-
+//////////////////////////  Populate Initial Chart  ///////////////////////
 
 // Retrieve data from the CSV file and execute everything below
 d3.csv("./assets/data/data.csv").then(function(Data, err) {
   if (err) throw err;
 
-  // var State=Data.map(d => d.abbr);
-  // console.log (State);
+  // console.log (Data);
     
   // parse data
   Data.forEach(function(data) {
@@ -212,7 +207,6 @@ d3.csv("./assets/data/data.csv").then(function(Data, err) {
     .attr("transform", `translate(0,0)`)
     .call(leftAxis);
 
-
   // append initial circles
   var circlesGroup = chartGroup.selectAll("circle")
     .data(Data)
@@ -238,7 +232,6 @@ d3.csv("./assets/data/data.csv").then(function(Data, err) {
 
     // append initial Linear Regression
 LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis)
-
   var LinearReg=chartGroup.append("svg:path")
     .datum(LinearRegdata)
     .attr("fill", "none")
@@ -311,6 +304,8 @@ LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis)
     .text("Lacks Healthcare(%)");
 
 
+/////////////////// Event Listener & Updating the Chart///////////////
+
   // x axis labels event listener
   xlabelsGroup.selectAll("text")
     .on("click", function() {
@@ -324,7 +319,6 @@ LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis)
         chosenXAxis = value;
         // console.log(chosenXAxis)
 
-        // functions here found above csv import
         // updates x scale for new data
         xLinearScale = Scale(Data, chosenXAxis,"x");
 
@@ -345,12 +339,7 @@ LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis)
         LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis);
         LinearReg=renderRegression(LinearReg, LinearRegdata,xLinearScale,yLinearScale);
 
-
-
-
-
         // changes classes to change bold text
-
         switch(chosenXAxis){
             case "poverty":
                 povertyLable
@@ -385,10 +374,7 @@ LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis)
                 .classed("active", true)
                 .classed("inactive", false);        
                 break;
-
         }
-
-
       }
     });
 
@@ -404,7 +390,6 @@ LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis)
 
         // console.log(chosenYAxis)
 
-        // functions here found above csv import
         // updates y scale for new data
         yLinearScale = Scale(Data, chosenYAxis,"y");
 
@@ -459,15 +444,9 @@ LinearRegdata= LinearReg_create_data(Data,chosenXAxis,chosenYAxis)
                 .classed("active", true)
                 .classed("inactive", false);        
                 break;
-
         }
-        
-        
       }
     });
-
-
-
 
 }).catch(function(error) {
   console.log(error);
