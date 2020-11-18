@@ -4,6 +4,7 @@
 <br>
 
 
+### The final project can be viewed at : https://nima-karimii.github.io/D3-challenge/
 
 
 ## Background
@@ -41,7 +42,6 @@ I am going to include more risk factors in scatter plot by:
 ![4-scatter](Images/D3Times.gif)
 
 
-### The final project can be viewed at : https://nima-karimii.github.io/D3-challenge/
 
 ### Hope you enjoy it.
 
